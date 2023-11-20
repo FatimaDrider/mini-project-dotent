@@ -1,17 +1,30 @@
 using API.Extensions;
-using Application.Activities;
 using Application.Core;
+using Application.Shared;
+using Domain;
+using Domain.Contracts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Persistence.Context;
+using Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.ConfigureApplicationServices();
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.ConfigurPersisitenceServices(builder.Configuration);
+builder.Services.ConfigureDomainServices();
+
+
+builder.Services.AddSwaggerGen();
+
+
 var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -32,7 +45,6 @@ try
 {
     var context = service.GetRequiredService<DataContext>();
     await context.Database.MigrateAsync();
-    await Seed.SeedData(context);
 }
 catch (Exception ex)
 {

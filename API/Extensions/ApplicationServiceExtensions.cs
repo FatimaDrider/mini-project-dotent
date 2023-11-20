@@ -1,12 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Activities;
+﻿
+using System.Reflection;
 using Application.Core;
+using Application.Core.DTOs.EntitiesDto.Category;
+using Application.Core.Features.Catergories.Handlers.Command;
+using Application.Core.Features.Catergories.Handlers.Query;
+using Application.Core.Features.Catergories.Request.Query;
+using Application.Core.MappingProfiles;
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Persistence.Context;
 
 namespace API.Extensions
 {
@@ -18,10 +22,8 @@ namespace API.Extensions
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-            services.AddDbContext<DataContext>(opt =>
-            {
-                opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
-            });
+            services.AddDbContext<DataContext>(options =>
+          options.UseNpgsql(config.GetConnectionString("DefaultConnection")));
 
             services.AddCors(opt =>
             {
@@ -31,8 +33,12 @@ namespace API.Extensions
                 });
             });
 
-            services.AddMediatR(typeof(List.Handler));
-            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+           
+            
+
+           // services.AddScoped<IMediator, Mediator>();
+           
+            
 
             return services;
         }
